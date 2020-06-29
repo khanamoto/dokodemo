@@ -6,3 +6,9 @@
 
 - GAE / Go
 - React, TypeScript (Firebase Hosting)
+
+# 実行
+
+```
+docker-compose up --build
+```
