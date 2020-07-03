@@ -1,0 +1,28 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+schema:
+  - name: dokodemo
+    path: .
+    commands:
+      install:
+        status: true
+        method: go build -o dokodemo
+      run:
+        status: true
+        method: ./dokodemo
+    watcher:
+      extensions:
+        - go
+      paths:
+        - /
+      ignored_paths:
+        - .git
+        - .realize
+        - vendor
+      scripts:
+        - type: before
+          command: wire ./...
+          global: true
+          output: true

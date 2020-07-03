@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/go/src/github.com/khanamoto/dokodemo
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      DATABASE_DSN: root@(db:3306)/dokodemo
+      DATABASE_DSN_TEST: root@(db:3306)/dokodemo_test
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db/docker:/docker-entrypoint-initdb.d
+      - .:/app
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
