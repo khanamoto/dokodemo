@@ -1,4 +1,4 @@
-FROM node:14.5
+FROM node:14.5-slim
 
 ENV WORKDIR /usr/src/app
 WORKDIR $WORKDIR
