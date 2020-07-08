@@ -2,12 +2,12 @@
 
 便利で高速な勉強会サイト
 
-# 環境
+## 環境
 
-- GAE / Go
+- GAE/Go
 - React, TypeScript (Firebase Hosting)
 
-# 実行
+## 実行
 
 ```
 docker-compose up --build
