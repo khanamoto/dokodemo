@@ -7,7 +7,7 @@ ENV PATH $WORKDIR/node_modules/.bin:$PATH
 
 COPY package*.json ./
 
-RUN npm install --silent
+RUN npm install
 #本番用
 #RUN npm install --only=production
 

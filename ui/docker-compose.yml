@@ -5,6 +5,7 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
+      # ボリュームを作成
       - /usr/src/app/node_modules
     ports:
       - "3000:3000"
