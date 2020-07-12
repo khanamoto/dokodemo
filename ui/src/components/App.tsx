@@ -1,5 +1,5 @@
-import React from 'react';
-import Button from "@material-ui/core/Button";
+import React from 'react'
+import Button from '@material-ui/core/Button'
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
     //   <header className="App-header"></header>
     //   Hello React
     // </div>
-  );
+  )
 }
 
-export default App;
+export default App
