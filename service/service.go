@@ -6,7 +6,6 @@ import (
 
 	"github.com/khanamoto/dokodemo/model"
 	"github.com/khanamoto/dokodemo/repository"
-	"github.com/khanamoto/dokodemo/titleFetcher"
 )
 
 func init() {
@@ -25,13 +24,12 @@ type Dokodemo interface {
 	 FindUserByToken(token string) (*model.User, error)
 }
 
-func NewApp(repo repository.Repository, titleFetcher titleFetcher.TitleFetcher) Dokodemo {
-	return &dokodemo{repo, titleFetcher }
+func NewApp(repo repository.Repository ) Dokodemo {
+	return &dokodemo{repo }
 }
 
 type dokodemo struct {
 	repo         repository.Repository
-	titleFetcher titleFetcher.TitleFetcher
 }
 
 func (app *dokodemo) Close() error {

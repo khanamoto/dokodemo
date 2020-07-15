@@ -13,7 +13,6 @@ import (
 	"github.com/khanamoto/dokodemo/config"
 	"github.com/khanamoto/dokodemo/repository"
 	"github.com/khanamoto/dokodemo/service"
-	"github.com/khanamoto/dokodemo/titleFetcher"
 	"github.com/khanamoto/dokodemo/web"
 )
 
@@ -36,7 +35,7 @@ func run(_ []string) error {
 		return fmt.Errorf("failed to create repository: %+v", err)
 	}
 
-	app := service.NewApp(repo, titleFetcher.New())
+	app := service.NewApp(repo)
 	server := &http.Server{
 		Addr:    ":" + strconv.Itoa(conf.Port),
 		Handler: web.NewServer(app).Handler(),
