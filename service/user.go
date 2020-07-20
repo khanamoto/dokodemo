@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (app *dokodemo) CreateNewUser(name string, password string) (err error) {
+func (app *dokodemo) CreateNewUser(name string, userName string, email string, password string) (err error) {
 	if name == "" {
 		return errors.New("empty user name")
 	}
@@ -17,7 +17,7 @@ func (app *dokodemo) CreateNewUser(name string, password string) (err error) {
 	if err != nil {
 		return err
 	}
-	return app.repo.CreateNewUser(name, string(passwordHash))
+	return app.repo.CreateNewUser(name, userName, email, string(passwordHash))
 }
 
 func (app *dokodemo) FindUserByName(name string) (*model.User, error) {

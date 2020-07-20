@@ -16,6 +16,18 @@ CREATE TABLE user (
     KEY (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE user_session (
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `token` VARCHAR(512) NOT NULL,
+
+    `expires_at` DATETIME(6) NOT NULL,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
+    PRIMARY KEY (token)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE study_group (
     `id` BIGINT UNSIGNED NOT NULL,
 

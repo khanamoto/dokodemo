@@ -11,15 +11,15 @@ import (
 
 var userNotFoundError = model.NotFoundError("user")
 
-func (r *repository) CreateNewUser(name string, passwordHash string) error {
+func (r *repository) CreateNewUser(name string, userName string, email string, passwordHash string) error {
 	id, err := r.generateID()
 	if err != nil {
 		return err
 	}
 	now := time.Now()
 	_, err = r.db.Exec(
-		`INSERT INTO user (id, name, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-		id, name, passwordHash, now, now,
+		`INSERT INTO user (id, name, user_name, email, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		id, name, userName, email, passwordHash, now, now,
 	)
 	return err
 }
@@ -46,10 +46,10 @@ func (r *repository) FindUserByID(id uint64) (*model.User, error) {
 		`SELECT id, name FROM user WHERE id = ? LIMIT 1`, id,
 	)
 	if err != nil {
-		 if err == sql.ErrNoRows {
-		 	return nil, userNotFoundError
-		 }
-		 return nil, err
+		if err == sql.ErrNoRows {
+			return nil, userNotFoundError
+		}
+		return nil, err
 	}
 	return &user, nil
 }
