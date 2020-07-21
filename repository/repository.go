@@ -13,11 +13,11 @@ import (
 type Repository interface {
 	CreateNewUser(name string, userName string, email string, passwordHash string) error
 	FindUserByName(name string) (*model.User, error)
-	FindUserByID(id uint64) (*model.User, error)
-	ListUsersByIDs(userIDs []uint64) ([]*model.User, error)
-	FindPasswordHashByName(name string) (string, error)
+	// FindUserByID(id uint64) (*model.User, error)
+	// ListUsersByIDs(userIDs []uint64) ([]*model.User, error)
+	// FindPasswordHashByName(name string) (string, error)
 	CreateNewToken(userID uint64, token string, expiresAt time.Time) error
-	FindUserByToken(token string) (*model.User, error)
+	// FindUserByToken(token string) (*model.User, error)
 
 	Close() error
 }

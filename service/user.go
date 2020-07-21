@@ -24,27 +24,27 @@ func (app *dokodemo) FindUserByName(name string) (*model.User, error) {
 	return app.repo.FindUserByName(name)
 }
 
-func (app *dokodemo) FindUserByID(userID uint64) (*model.User, error) {
-	return app.repo.FindUserByID(userID)
-}
+// func (app *dokodemo) FindUserByID(userID uint64) (*model.User, error) {
+// 	return app.repo.FindUserByID(userID)
+// }
+//
+// func (app *dokodemo) ListUsersByIDs(userIDs []uint64) ([]*model.User, error) {
+// 	return app.repo.ListUsersByIDs(userIDs)
+// }
 
-func (app *dokodemo) ListUsersByIDs(userIDs []uint64) ([]*model.User, error) {
-	return app.repo.ListUsersByIDs(userIDs)
-}
-
-func (app *dokodemo) LoginUser(name string, password string) (bool, error) {
-	passwordHash, err := app.repo.FindPasswordHashByName(name)
-	if err != nil {
-		return false, err
-	}
-	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
-		if err == bcrypt.ErrMismatchedHashAndPassword {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
-}
+// func (app *dokodemo) LoginUser(name string, password string) (bool, error) {
+// 	passwordHash, err := app.repo.FindPasswordHashByName(name)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
+// 		if err == bcrypt.ErrMismatchedHashAndPassword {
+// 			return false, nil
+// 		}
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
 
 func generateToken() string {
 	table := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_@"
@@ -67,6 +67,6 @@ func (app *dokodemo) CreateNewToken(userID uint64, expiresAt time.Time) (string,
 	return token, nil
 }
 
-func (app *dokodemo) FindUserByToken(token string) (*model.User, error) {
-	return app.repo.FindUserByToken(token)
-}
+// func (app *dokodemo) FindUserByToken(token string) (*model.User, error) {
+// 	return app.repo.FindUserByToken(token)
+// }

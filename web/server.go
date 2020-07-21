@@ -1,8 +1,6 @@
 package web
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -32,8 +30,6 @@ func (s server) Handler() http.Handler {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/hello", s.willSignupHandler).Methods("GET")
-	router.HandleFunc("/todos", s.todoIndex).Methods("GET")
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
 
 	return handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
@@ -66,24 +62,4 @@ func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-func (s *server) willSignupHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World\n")
-}
-
-type Todo struct {
-	Name      string `json:"name"`
-	Completed bool   `json:"completed"`
-}
-
-type Todos []Todo
-
-func (s *server) todoIndex(w http.ResponseWriter, r *http.Request) {
-	todos := Todos{
-		Todo{Name: "https://golang.org"},
-		Todo{Name: "http://go.shibu.jp/effective_go.html"},
-	}
-
-	json.NewEncoder(w).Encode(todos)
 }
