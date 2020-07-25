@@ -5,12 +5,16 @@ CREATE TABLE user (
     `user_name` VARCHAR(32) NOT NULL DEFAULT '',
     `email` VARCHAR(255) NOT NULL,
     `password_hash` VARCHAR(255) NOT NULL,
+    `job` VARCHAR(255),
+    `website` VARCHAR(255),
+    `biography` VARCHAR(1000),
 
     `created_at` DATETIME(6) NOT NULL,
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
     UNIQUE KEY (name),
+    UNIQUE KEY (user_name),
 
     KEY (created_at),
     KEY (updated_at)
@@ -89,6 +93,7 @@ CREATE TABLE membership (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, study_group_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
@@ -114,6 +119,7 @@ CREATE TABLE sub_membership (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, study_group_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
@@ -137,6 +143,7 @@ CREATE TABLE administrator (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, event_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
@@ -160,6 +167,7 @@ CREATE TABLE participant (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, event_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
@@ -183,6 +191,7 @@ CREATE TABLE speaker (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, event_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
