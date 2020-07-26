@@ -16,12 +16,12 @@ type Dokodemo interface {
 	Close() error
 
 	CreateNewUser(name string, userName string, email string, passwordHash string) error
-	FindUserByName(name string) (*model.User, error)
-	// FindUserByID(userID uint64) (*model.User, error)
-	// ListUsersByIDs(userIDs []uint64) ([]*model.User, error)
-	// LoginUser(name string, password string) (bool, error)
+	FindUserByUserName(userName string) (*model.User, error)
 	CreateNewToken(userID uint64, expiresAt time.Time) (string, error)
-	// FindUserByToken(token string) (*model.User, error)
+
+	// CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
+
+	CreateMembership(name string, url string, userName string) (*model.Membership, error)
 }
 
 func NewApp(repo repository.Repository) Dokodemo {

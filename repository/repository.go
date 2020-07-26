@@ -12,12 +12,13 @@ import (
 
 type Repository interface {
 	CreateNewUser(name string, userName string, email string, passwordHash string) error
-	FindUserByName(name string) (*model.User, error)
-	// FindUserByID(id uint64) (*model.User, error)
-	// ListUsersByIDs(userIDs []uint64) ([]*model.User, error)
-	// FindPasswordHashByName(name string) (string, error)
+	FindUserByUserName(userName string) (*model.User, error)
 	CreateNewToken(userID uint64, token string, expiresAt time.Time) error
-	// FindUserByToken(token string) (*model.User, error)
+
+	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
+	// FindStudyGroupByURL(url string) (*model.StudyGroup, error)
+
+	CreateMembership(userID uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
 
 	Close() error
 }

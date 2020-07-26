@@ -13,7 +13,6 @@ CREATE TABLE user (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE KEY (name),
     UNIQUE KEY (user_name),
 
     KEY (created_at),
@@ -36,11 +35,13 @@ CREATE TABLE study_group (
     `id` BIGINT UNSIGNED NOT NULL,
 
     `name` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
 
     `created_at` DATETIME(6) NOT NULL,
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (url),
 
     KEY (created_at),
     KEY (updated_at)
@@ -52,11 +53,13 @@ CREATE TABLE sub_study_group (
     `study_group_id` BIGINT UNSIGNED NOT NULL,
 
     `name` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
 
     `created_at` DATETIME(6) NOT NULL,
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (url),
 
     KEY (created_at),
     KEY (updated_at)
