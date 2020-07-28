@@ -19,9 +19,9 @@ type Dokodemo interface {
 	FindUserByUserName(userName string) (*model.User, error)
 	CreateNewToken(userID uint64, expiresAt time.Time) (string, error)
 
-	// CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
+	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
 
-	CreateMembership(name string, url string, userName string) (*model.Membership, error)
+	CreateMembership(studyGroupID uint64, userName string) (*model.Membership, error)
 }
 
 func NewApp(repo repository.Repository) Dokodemo {
