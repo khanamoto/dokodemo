@@ -39,20 +39,18 @@ func (s server) Handler() http.Handler {
 }
 
 func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
-	// form := form.User{
-	// 	Name: r.FormValue("name"),
-	// 	UserName: r.FormValue("userName"),
-	// 	Email: r.FormValue("email")
-	// }
-	// if ok, errorMessages := form.Validate(); !ok {}
+	userDataSet := &model.User{
+		Name:     r.FormValue("name"),
+		UserName: r.FormValue("userName"),
+		Email:    r.FormValue("email"),
+		Password: r.FormValue("password"),
+	}
+	if err := validateUserBase(userDataSet); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	// var user *model.User
-	// if err := s.Validate(&user); err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
-
-	name, password, userName, email := r.FormValue("name"), r.FormValue("password"), r.FormValue("userName"), r.FormValue("email")
+	name, userName, email, password := userDataSet.Name, userDataSet.UserName, userDataSet.Email, userDataSet.Password
 	if err := s.app.CreateNewUser(name, userName, email, password); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -85,22 +83,24 @@ func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
 		Name: r.FormValue("name"),
 		URL:  r.FormValue("url"),
 	}
-	validateInput(studyGroupDataSet)
+	if err := validateAll(studyGroupDataSet); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	userDataSet := &model.User{
 		UserName: r.FormValue("userName"),
 	}
-	validateInput(userDataSet)
+	if err := validateUserName(userDataSet); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	name, url, userName := studyGroupDataSet.Name, studyGroupDataSet.URL, userDataSet.UserName
-
-	// TODO: UserNameだけおかしいとき、StudyGroupだけ作られて中間テーブルが作られない
-	//      そうすると上のバリデーションの段階でエラーハンドリングをしたほうがいい
 	studyGroup, err := s.app.CreateStudyGroup(name, url)
 	if err != nil {
 		http.Error(w, "failed to create study group", http.StatusBadRequest)
 		return
 	}
-
 	if _, err := s.app.CreateMembership(studyGroup.ID, userName); err != nil {
 		http.Error(w, "failed to create membership", http.StatusBadRequest)
 		return
