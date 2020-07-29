@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/khanamoto/dokodemo/model"
 	"github.com/khanamoto/dokodemo/service"
 )
 
@@ -38,6 +39,19 @@ func (s server) Handler() http.Handler {
 }
 
 func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
+	// form := form.User{
+	// 	Name: r.FormValue("name"),
+	// 	UserName: r.FormValue("userName"),
+	// 	Email: r.FormValue("email")
+	// }
+	// if ok, errorMessages := form.Validate(); !ok {}
+
+	// var user *model.User
+	// if err := s.Validate(&user); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
 	name, password, userName, email := r.FormValue("name"), r.FormValue("password"), r.FormValue("userName"), r.FormValue("email")
 	if err := s.app.CreateNewUser(name, userName, email, password); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -67,8 +81,20 @@ func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
-	name, url, userName := r.FormValue("name"), r.FormValue("url"), r.FormValue("userName")
+	studyGroupDataSet := &model.StudyGroup{
+		Name: r.FormValue("name"),
+		URL:  r.FormValue("url"),
+	}
+	validateInput(studyGroupDataSet)
+	userDataSet := &model.User{
+		UserName: r.FormValue("userName"),
+	}
+	validateInput(userDataSet)
 
+	name, url, userName := studyGroupDataSet.Name, studyGroupDataSet.URL, userDataSet.UserName
+
+	// TODO: UserNameだけおかしいとき、StudyGroupだけ作られて中間テーブルが作られない
+	//      そうすると上のバリデーションの段階でエラーハンドリングをしたほうがいい
 	studyGroup, err := s.app.CreateStudyGroup(name, url)
 	if err != nil {
 		http.Error(w, "failed to create study group", http.StatusBadRequest)
