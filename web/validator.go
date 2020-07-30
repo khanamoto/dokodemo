@@ -7,6 +7,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// TODO: fieldName以外DRYにする
+
 func validateAll(dataSet interface{}) error {
 	validate := validator.New()
 	err := validate.Struct(dataSet)

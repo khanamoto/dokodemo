@@ -34,6 +34,7 @@ func (s server) Handler() http.Handler {
 
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
 	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
+	router.HandleFunc("/signout", s.signoutHandler).Methods("POST")
 	router.HandleFunc("/group", s.addStudyGroupHandler).Methods("POST")
 	// router.HandleFunc("/subgroup", s.createSubStudyGroupHandler).Methods("POST")
 
@@ -81,6 +82,8 @@ func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) signinHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: ユーザーがログイン済みか findUser でチェックする
+
 	userDataset := &model.User{
 		UserName: r.FormValue("userName"),
 		Password: r.FormValue("password"),
@@ -115,6 +118,15 @@ func (s *server) signinHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("login success")
 
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) signoutHandler(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    sessionKey,
+		Value:   "",
+		Expires: time.Unix(0, 0),
+	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
