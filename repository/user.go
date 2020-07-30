@@ -38,6 +38,21 @@ func (r *repository) FindUserByUserName(userName string) (*model.User, error) {
 	return &user, nil
 }
 
+func (r *repository) FindPasswordHashByUserName(userName string) (string, error) {
+	var hash string
+	err := r.db.Get(
+		&hash,
+		`SELECT password_hash FROM user WHERE user_name = ? LIMIT 1`, userName,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", nil
+	}
+	return hash, nil
+}
+
 func (r *repository) CreateNewToken(userID uint64, token string, expiresAt time.Time) error {
 	now := time.Now()
 	_, err := r.db.Exec(

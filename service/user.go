@@ -20,6 +20,20 @@ func (app *dokodemo) CreateNewUser(name string, userName string, email string, p
 	return app.repo.CreateNewUser(name, userName, email, string(passwordHash))
 }
 
+func (app *dokodemo) LoginUser(userName string, password string) (bool, error) {
+	passwordHash, err := app.repo.FindPasswordHashByUserName(userName)
+	if err != nil {
+		return false, err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
+		if err == bcrypt.ErrMismatchedHashAndPassword {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
 func (app *dokodemo) FindUserByUserName(userName string) (*model.User, error) {
 	return app.repo.FindUserByUserName(userName)
 }

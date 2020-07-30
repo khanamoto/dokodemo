@@ -13,6 +13,7 @@ import (
 type Repository interface {
 	CreateNewUser(name string, userName string, email string, passwordHash string) error
 	FindUserByUserName(userName string) (*model.User, error)
+	FindPasswordHashByUserName(userName string) (string, error)
 	CreateNewToken(userID uint64, token string, expiresAt time.Time) error
 
 	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)

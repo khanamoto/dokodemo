@@ -17,6 +17,7 @@ type Dokodemo interface {
 
 	CreateNewUser(name string, userName string, email string, passwordHash string) error
 	FindUserByUserName(userName string) (*model.User, error)
+	LoginUser(userName string, password string) (bool, error)
 	CreateNewToken(userID uint64, expiresAt time.Time) (string, error)
 
 	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)

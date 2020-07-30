@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -32,6 +33,7 @@ func (s server) Handler() http.Handler {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
+	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
 	router.HandleFunc("/group", s.addStudyGroupHandler).Methods("POST")
 	// router.HandleFunc("/subgroup", s.createSubStudyGroupHandler).Methods("POST")
 
@@ -45,7 +47,7 @@ func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 		Email:    r.FormValue("email"),
 		Password: r.FormValue("password"),
 	}
-	if err := validateUserBase(userDataSet); err != nil {
+	if err := validateBaseUser(userDataSet); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -74,6 +76,44 @@ func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 		Value:   token,
 		Expires: expiresAt,
 	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) signinHandler(w http.ResponseWriter, r *http.Request) {
+	userDataset := &model.User{
+		UserName: r.FormValue("userName"),
+		Password: r.FormValue("password"),
+	}
+	if err := validateLoginUser(userDataset); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	userName, password := userDataset.UserName, userDataset.Password
+	if ok, err := s.app.LoginUser(userName, password); err != nil || !ok {
+		http.Error(w, "user not found or invalid password", http.StatusBadRequest)
+		return
+	}
+
+	user, err := s.app.FindUserByUserName(userName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	expiresAt := time.Now().Add(24 * time.Hour)
+	token, err := s.app.CreateNewToken(user.ID, expiresAt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    sessionKey,
+		Value:   token,
+		Expires: expiresAt,
+	})
+
+	fmt.Println("login success")
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
