@@ -3,7 +3,6 @@ package web
 import (
 	"errors"
 	"log"
-	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -20,7 +19,7 @@ func validateAll(dataSet interface{}) error {
 	return nil
 }
 
-func validateLoginUser(dataSet interface{}) error {
+func validateBaseUser(dataSet interface{}) error {
 	validate := validator.New()
 	err := validate.Struct(dataSet)
 	errs := err.(validator.ValidationErrors)
@@ -28,8 +27,8 @@ func validateLoginUser(dataSet interface{}) error {
 	msg := make([]validator.FieldError, 0, cap)
 
 	for _, err := range err.(validator.ValidationErrors) {
-		fieldName := "UserName Password"
-		if strings.Contains(fieldName, err.Field()) {
+		fieldName := err.Field()
+		if fieldName == "Name" || fieldName == "UserName" || fieldName == "Email" || fieldName == "Password" {
 			msg = append(msg, err)
 		}
 	}
@@ -40,7 +39,7 @@ func validateLoginUser(dataSet interface{}) error {
 	return nil
 }
 
-func validateBaseUser(dataSet interface{}) error {
+func validateLoginUser(dataSet interface{}) error {
 	validate := validator.New()
 	err := validate.Struct(dataSet)
 	errs := err.(validator.ValidationErrors)
@@ -48,8 +47,8 @@ func validateBaseUser(dataSet interface{}) error {
 	msg := make([]validator.FieldError, 0, cap)
 
 	for _, err := range err.(validator.ValidationErrors) {
-		fieldName := "Name UserName Email Password"
-		if strings.Contains(fieldName, err.Field()) {
+		fieldName := err.Field()
+		if fieldName == "UserName" || fieldName == "Password" {
 			msg = append(msg, err)
 		}
 	}
@@ -68,8 +67,8 @@ func validateUserName(dataSet interface{}) error {
 	msg := make([]validator.FieldError, 0, cap)
 
 	for _, err := range err.(validator.ValidationErrors) {
-		switch err.Field() {
-		case "UserName":
+		fieldName := err.Field()
+		if fieldName == "UserName" {
 			msg = append(msg, err)
 		}
 	}
