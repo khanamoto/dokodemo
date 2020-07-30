@@ -85,7 +85,7 @@ func (s *server) signinHandler(w http.ResponseWriter, r *http.Request) {
 		UserName: r.FormValue("userName"),
 		Password: r.FormValue("password"),
 	}
-	if err := validateLoginUser(userDataset); err != nil {
+	if err := validateUserNameAndPassword(userDataset); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

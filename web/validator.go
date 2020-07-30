@@ -39,7 +39,7 @@ func validateBaseUser(dataSet interface{}) error {
 	return nil
 }
 
-func validateLoginUser(dataSet interface{}) error {
+func validateUserNameAndPassword(dataSet interface{}) error {
 	validate := validator.New()
 	err := validate.Struct(dataSet)
 	errs := err.(validator.ValidationErrors)
