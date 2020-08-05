@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/handlers"
@@ -32,14 +33,19 @@ func (s server) Handler() http.Handler {
 
 	router := mux.NewRouter()
 
+	// router.HandleFunc("/", s.indexHandler).Methods("GET")
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
 	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
 	router.HandleFunc("/signout", s.signoutHandler).Methods("POST")
-	router.HandleFunc("/group", s.addStudyGroupHandler).Methods("POST")
-	// router.HandleFunc("/subgroup", s.createSubStudyGroupHandler).Methods("POST")
+	router.HandleFunc("/groups", s.addStudyGroupHandler).Methods("POST")
+	router.HandleFunc("/groups/{id:[0-9]+}/subgroups", s.addSubStudyGroupHandler).Methods("POST")
 
 	return handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 }
+
+// func (s *server) indexHandler(w http.ResponseWriter, r *http.Request) {
+//
+// }
 
 func (s *server) signupHandler(w http.ResponseWriter, r *http.Request) {
 	userDataSet := &model.User{
@@ -161,22 +167,39 @@ func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-// func (s *server) findStudyGroup(r *http.Request) (studyGroup *model.StudyGroup) {
-//
-// }
+func (s *server) addSubStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	studyGroupID, err := strconv.ParseUint(v["id"], 10, 64)
+	if err != nil {
+		http.Error(w, "invalid study group id", http.StatusBadRequest)
+		return
+	}
+	// TODO: studyGroupIDが存在するものか確認（ブラウザ以外でpostされたときに弾くために）
 
-// func (s *server) createSubStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
-// 	studyGroup := s.app.FindStudyGroupByID(r.)
-// 	if studyGroup == nil {
-// 		http.Error(w, "please create study group", http.StatusBadRequest)
-// 		return
-// 	}
-//
-// 	name := r.FormValue("name")
-// 	if err := s.app.CreateNewStudyGroup(studyGroup.ID, name); err != nil {
-// 		http.Error(w, "failed to create sub study group", http.StatusBadRequest)
-// 		return
-// 	}
-//
-// 	http.Redirect(w, r, "/", http.StatusSeeOther)
-// }
+	subStudyGroupDataSet := &model.SubStudyGroup{
+		Name: r.FormValue("name"),
+		URL:  r.FormValue("url"),
+	}
+	if err := validateAll(subStudyGroupDataSet); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// TODO: フォーム入力されたuserNameリストをバリデーションして、変数にセットする
+	//      userNameはグループに所属していること（管理者でなくてもいい）
+	//      userNameは存在していること（service層で確認）
+
+	name, url := subStudyGroupDataSet.Name, subStudyGroupDataSet.URL
+	userNames := r.Form["userName"]
+
+	subStudyGroup, err := s.app.CreateSubStudyGroup(studyGroupID, name, url)
+	if err != nil {
+		http.Error(w, "failed to create sub study group", http.StatusBadRequest)
+		return
+	}
+	if _, err := s.app.CreateSubMembership(subStudyGroup.ID, userNames); err != nil {
+		http.Error(w, "failed to create sub membership", http.StatusBadRequest)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

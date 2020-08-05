@@ -22,7 +22,11 @@ type Dokodemo interface {
 
 	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
 
+	CreateSubStudyGroup(studyGroupID uint64, name string, url string) (*model.SubStudyGroup, error)
+
 	CreateMembership(studyGroupID uint64, userName string) (*model.Membership, error)
+
+	CreateSubMembership(subStudyGroupID uint64, userName []string) (*model.SubMembership, error)
 }
 
 func NewApp(repo repository.Repository) Dokodemo {

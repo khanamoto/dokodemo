@@ -114,7 +114,7 @@ CREATE TABLE sub_membership (
     `id` BIGINT UNSIGNED NOT NULL,
 
     `user_id` BIGINT UNSIGNED NOT NULL,
-    `study_group_id` BIGINT UNSIGNED NOT NULL,
+    `sub_study_group_id` BIGINT UNSIGNED NOT NULL,
 
     `authority` INT NOT NULL DEFAULT 1,
 
@@ -122,14 +122,14 @@ CREATE TABLE sub_membership (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE KEY (user_id, study_group_id),
+    UNIQUE KEY (user_id, sub_study_group_id),
 
     FOREIGN KEY (user_id)
         REFERENCES user(id)
         ON DELETE CASCADE,
 
-    FOREIGN KEY (study_group_id)
-        REFERENCES study_group(id)
+    FOREIGN KEY (sub_study_group_id)
+        REFERENCES sub_study_group(id)
         ON DELETE CASCADE,
 
     KEY (created_at),

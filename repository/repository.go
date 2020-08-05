@@ -19,7 +19,11 @@ type Repository interface {
 	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
 	// FindStudyGroupByURL(url string) (*model.StudyGroup, error)
 
+	CreateSubStudyGroup(studyGroupID uint64, name string, url string) (*model.SubStudyGroup, error)
+
 	CreateMembership(userID uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
+
+	CreateSubMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.SubMembership, error)
 
 	Close() error
 }
