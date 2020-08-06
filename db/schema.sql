@@ -14,6 +14,7 @@ CREATE TABLE user (
 
     PRIMARY KEY (id),
     UNIQUE KEY (user_name),
+    UNIQUE KEY (email),
 
     KEY (created_at),
     KEY (updated_at)
