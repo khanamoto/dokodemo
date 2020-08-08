@@ -9,18 +9,36 @@ import (
 
 var membershipNotFoundError = model.NotFoundError("membership")
 
-func (r *repository) CreateMembership(userID uint64, studyGroupID uint64, authority int32) (*model.Membership, error) {
-	id, err := r.generateID()
+func (r *repository) CreateMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.Membership, error) {
+	now := time.Now()
+
+	tx, err := r.db.Begin()
 	if err != nil {
 		return nil, err
 	}
-	now := time.Now()
-	_, err = r.db.Exec(
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(
 		`INSERT INTO membership (id, user_id, study_group_id, authority, created_at, updated_at) VALUES (?,?,?,?,?,?)`,
-		id, userID, studyGroupID, authority, now, now,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &model.Membership{ID: id, UserID: userID, StudyGroupID: studyGroupID, Authority: authority}, nil
+	defer stmt.Close()
+
+	for _, userID := range userIDs {
+		id, err := r.generateID()
+		if err != nil {
+			return nil, err
+		}
+
+		if _, err := stmt.Exec(id, userID, studyGroupID, authority, now, now); err != nil {
+			return nil, err
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }

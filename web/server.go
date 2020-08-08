@@ -37,8 +37,9 @@ func (s server) Handler() http.Handler {
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
 	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
 	router.HandleFunc("/signout", s.signoutHandler).Methods("POST")
-	router.HandleFunc("/groups", s.addStudyGroupHandler).Methods("POST")
-	router.HandleFunc("/groups/{id:[0-9]+}/subgroups", s.addSubStudyGroupHandler).Methods("POST")
+	// router.HandleFunc("/groups", s.addStudyGroupHandler).Methods("POST")
+	router.HandleFunc("/organizations", s.addOrganizationHandler).Methods("POST")
+	router.HandleFunc("/departments/{id:[0-9]+}/groups", s.addStudyGroupHandler).Methods("POST")
 
 	return handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
 }
@@ -136,12 +137,43 @@ func (s *server) signoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
-	studyGroupDataSet := &model.StudyGroup{
+// func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
+// 	studyGroupDataSet := &model.StudyGroup{
+// 		Name: r.FormValue("name"),
+// 		URL:  r.FormValue("url"),
+// 	}
+// 	if err := validateAll(studyGroupDataSet); err != nil {
+// 		http.Error(w, err.Error(), http.StatusBadRequest)
+// 		return
+// 	}
+// 	userDataSet := &model.User{
+// 		UserName: r.FormValue("userName"),
+// 	}
+// 	if err := validateUserName(userDataSet); err != nil {
+// 		http.Error(w, err.Error(), http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	name, url, userName := studyGroupDataSet.Name, studyGroupDataSet.URL, userDataSet.UserName
+// 	studyGroup, err := s.app.CreateStudyGroup(name, url)
+// 	if err != nil {
+// 		http.Error(w, "failed to create study group", http.StatusBadRequest)
+// 		return
+// 	}
+// 	if _, err := s.app.CreateMembership(studyGroup.ID, userName); err != nil {
+// 		http.Error(w, "failed to create membership", http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	http.Redirect(w, r, "/", http.StatusSeeOther)
+// }
+
+func (s *server) addOrganizationHandler(w http.ResponseWriter, r *http.Request) {
+	organizationDataSet := &model.Organization{
 		Name: r.FormValue("name"),
 		URL:  r.FormValue("url"),
 	}
-	if err := validateAll(studyGroupDataSet); err != nil {
+	if err := validateAll(organizationDataSet); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -153,34 +185,34 @@ func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	name, url, userName := studyGroupDataSet.Name, studyGroupDataSet.URL, userDataSet.UserName
-	studyGroup, err := s.app.CreateStudyGroup(name, url)
+	name, url, userName := organizationDataSet.Name, organizationDataSet.URL, userDataSet.UserName
+	organization, err := s.app.CreateOrganization(name, url)
 	if err != nil {
-		http.Error(w, "failed to create study group", http.StatusBadRequest)
+		http.Error(w, "failed to create organization", http.StatusBadRequest)
 		return
 	}
-	if _, err := s.app.CreateMembership(studyGroup.ID, userName); err != nil {
-		http.Error(w, "failed to create membership", http.StatusBadRequest)
+	if _, err := s.app.CreateBelonging(organization.ID, userName); err != nil {
+		http.Error(w, "failed to create belonging", http.StatusBadRequest)
 		return
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func (s *server) addSubStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
+func (s *server) addStudyGroupHandler(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
-	studyGroupID, err := strconv.ParseUint(v["id"], 10, 64)
+	departmentID, err := strconv.ParseUint(v["id"], 10, 64)
 	if err != nil {
-		http.Error(w, "invalid study group id", http.StatusBadRequest)
+		http.Error(w, "invalid department id", http.StatusBadRequest)
 		return
 	}
-	// TODO: studyGroupIDが存在するものか確認（ブラウザ以外でpostされたときに弾くために）
+	// TODO: departmentIDが存在するものか確認（ブラウザ以外でpostされたときに弾くために）
 
-	subStudyGroupDataSet := &model.SubStudyGroup{
+	studyGroupDataSet := &model.StudyGroup{
 		Name: r.FormValue("name"),
 		URL:  r.FormValue("url"),
 	}
-	if err := validateAll(subStudyGroupDataSet); err != nil {
+	if err := validateAll(studyGroupDataSet); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -188,16 +220,16 @@ func (s *server) addSubStudyGroupHandler(w http.ResponseWriter, r *http.Request)
 	//      userNameはグループに所属していること（管理者でなくてもいい）
 	//      userNameは存在していること（service層で確認）
 
-	name, url := subStudyGroupDataSet.Name, subStudyGroupDataSet.URL
+	name, url := studyGroupDataSet.Name, studyGroupDataSet.URL
 	userNames := r.Form["userName"]
 
-	subStudyGroup, err := s.app.CreateSubStudyGroup(studyGroupID, name, url)
+	studyGroup, err := s.app.CreateStudyGroup(departmentID, name, url)
 	if err != nil {
-		http.Error(w, "failed to create sub study group", http.StatusBadRequest)
+		http.Error(w, "failed to create study group", http.StatusBadRequest)
 		return
 	}
-	if _, err := s.app.CreateSubMembership(subStudyGroup.ID, userNames); err != nil {
-		http.Error(w, "failed to create sub membership", http.StatusBadRequest)
+	if _, err := s.app.CreateMembership(studyGroup.ID, userNames); err != nil {
+		http.Error(w, "failed to create membership", http.StatusBadRequest)
 		return
 	}
 

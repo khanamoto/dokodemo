@@ -20,13 +20,11 @@ type Dokodemo interface {
 	LoginUser(userName string, password string) (bool, error)
 	CreateNewToken(userID uint64, expiresAt time.Time) (string, error)
 
-	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
+	CreateOrganization(name string, url string) (*model.Organization, error)
+	CreateBelonging(OrganizationID uint64, userName string) (*model.Belonging, error)
 
-	CreateSubStudyGroup(studyGroupID uint64, name string, url string) (*model.SubStudyGroup, error)
-
-	CreateMembership(studyGroupID uint64, userName string) (*model.Membership, error)
-
-	CreateSubMembership(subStudyGroupID uint64, userName []string) (*model.SubMembership, error)
+	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
+	CreateMembership(studyGroupID uint64, userName []string) (*model.Membership, error)
 }
 
 func NewApp(repo repository.Repository) Dokodemo {

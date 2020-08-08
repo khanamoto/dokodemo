@@ -9,33 +9,18 @@ import (
 
 var studyGroupNotFoundError = model.NotFoundError("study_group")
 
-func (r *repository) CreateStudyGroup(name string, url string) (*model.StudyGroup, error) {
+func (r *repository) CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error) {
 	id, err := r.generateID()
 	if err != nil {
 		return nil, err
 	}
 	now := time.Now()
 	_, err = r.db.Exec(
-		`INSERT INTO study_group (id, name, url, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-		id, name, url, now, now,
+		`INSERT INTO study_group (id, department_id, name, url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+		id, departmentID, name, url, now, now,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &model.StudyGroup{ID: id, Name: name, URL: url}, nil
+	return &model.StudyGroup{ID: id, DepartmentID: departmentID, Name: name, URL: url}, nil
 }
-
-// func (r *repository) FindStudyGroupByURL(url string) (*model.StudyGroup, error) {
-// 	var studyGroup model.StudyGroup
-// 	err := r.db.Get(
-// 		&studyGroup,
-// 		`SELECT id,name,url FROM study_group WHERE url = ? LIMIT 1`, url,
-// 	)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			return nil, studyGroupNotFoundError
-// 		}
-// 		return nil, err
-// 	}
-// 	return &studyGroup, nil
-// }

@@ -32,26 +32,44 @@ CREATE TABLE user_session (
     PRIMARY KEY (token)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE organization (
+    `id` BIGINT UNSIGNED NOT NULL,
+
+    `name` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY (url),
+
+    KEY (created_at),
+    KEY (updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE department (
+    `id` BIGINT UNSIGNED NOT NULL,
+
+    `organization_id` BIGINT UNSIGNED NOT NULL,
+
+    `name` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY (url),
+
+    KEY (created_at),
+    KEY (updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE study_group (
     `id` BIGINT UNSIGNED NOT NULL,
 
-    `name` VARCHAR(255) NOT NULL,
-    `url` VARCHAR(255) NOT NULL,
-
-    `created_at` DATETIME(6) NOT NULL,
-    `updated_at` DATETIME(6) NOT NULL,
-
-    PRIMARY KEY (id),
-    UNIQUE KEY (url),
-
-    KEY (created_at),
-    KEY (updated_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE sub_study_group (
-    `id` BIGINT UNSIGNED NOT NULL,
-
-    `study_group_id` BIGINT UNSIGNED NOT NULL,
+    `department_id` BIGINT UNSIGNED NOT NULL,
 
     `name` VARCHAR(255) NOT NULL,
     `url` VARCHAR(255) NOT NULL,
@@ -66,20 +84,53 @@ CREATE TABLE sub_study_group (
     KEY (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE event (
+CREATE TABLE belonging (
     `id` BIGINT UNSIGNED NOT NULL,
 
-    `sub_study_group_id` BIGINT UNSIGNED NOT NULL,
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `organization_id` BIGINT UNSIGNED NOT NULL,
 
-    `name` VARCHAR(255) NOT NULL,
-    `event_date` DATETIME(6) NOT NULL,
-    `description` VARCHAR(5000) NOT NULL,
-    `place` VARCHAR(255) NOT NULL,
+    `authority` INT NOT NULL DEFAULT 1,
 
     `created_at` DATETIME(6) NOT NULL,
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (user_id, organization_id),
+
+    FOREIGN KEY (user_id)
+        REFERENCES user(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (organization_id)
+        REFERENCES organization(id)
+        ON DELETE CASCADE,
+
+    KEY (created_at),
+    KEY (updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE staff (
+    `id` BIGINT UNSIGNED NOT NULL,
+
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `department_id` BIGINT UNSIGNED NOT NULL,
+
+    `authority` INT NOT NULL DEFAULT 1,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY (user_id, department_id),
+
+    FOREIGN KEY (user_id)
+        REFERENCES user(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (department_id)
+        REFERENCES department(id)
+        ON DELETE CASCADE,
 
     KEY (created_at),
     KEY (updated_at)
@@ -111,27 +162,20 @@ CREATE TABLE membership (
     KEY (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE sub_membership (
+CREATE TABLE event (
     `id` BIGINT UNSIGNED NOT NULL,
 
-    `user_id` BIGINT UNSIGNED NOT NULL,
     `sub_study_group_id` BIGINT UNSIGNED NOT NULL,
 
-    `authority` INT NOT NULL DEFAULT 1,
+    `name` VARCHAR(255) NOT NULL,
+    `event_date` DATETIME(6) NOT NULL,
+    `description` VARCHAR(5000) NOT NULL,
+    `place` VARCHAR(255) NOT NULL,
 
     `created_at` DATETIME(6) NOT NULL,
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE KEY (user_id, sub_study_group_id),
-
-    FOREIGN KEY (user_id)
-        REFERENCES user(id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (sub_study_group_id)
-        REFERENCES sub_study_group(id)
-        ON DELETE CASCADE,
 
     KEY (created_at),
     KEY (updated_at)

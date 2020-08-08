@@ -16,14 +16,11 @@ type Repository interface {
 	FindPasswordHashByUserName(userName string) (string, error)
 	CreateNewToken(userID uint64, token string, expiresAt time.Time) error
 
-	CreateStudyGroup(name string, url string) (*model.StudyGroup, error)
-	// FindStudyGroupByURL(url string) (*model.StudyGroup, error)
+	CreateOrganization(name string, url string) (*model.Organization, error)
+	CreateBelonging(userID uint64, organizationID uint64, authority int32) (*model.Belonging, error)
 
-	CreateSubStudyGroup(studyGroupID uint64, name string, url string) (*model.SubStudyGroup, error)
-
-	CreateMembership(userID uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
-
-	CreateSubMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.SubMembership, error)
+	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
+	CreateMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
 
 	Close() error
 }
