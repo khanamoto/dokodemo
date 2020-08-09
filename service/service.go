@@ -23,6 +23,9 @@ type Dokodemo interface {
 	CreateOrganization(name string, url string) (*model.Organization, error)
 	CreateBelonging(OrganizationID uint64, userName string) (*model.Belonging, error)
 
+	CreateDepartment(organizationID uint64, name string, url string) (*model.Department, error)
+	CreateStaff(departmentID uint64, userNames []string) (*model.Staff, error)
+
 	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
 	CreateMembership(studyGroupID uint64, userName []string) (*model.Membership, error)
 }

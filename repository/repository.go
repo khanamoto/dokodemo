@@ -19,6 +19,9 @@ type Repository interface {
 	CreateOrganization(name string, url string) (*model.Organization, error)
 	CreateBelonging(userID uint64, organizationID uint64, authority int32) (*model.Belonging, error)
 
+	CreateDepartment(organizationID uint64, name string, url string) (*model.Department, error)
+	CreateStaff(userIDs []uint64, departmentID uint64, authority int32) (*model.Staff, error)
+
 	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
 	CreateMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
 

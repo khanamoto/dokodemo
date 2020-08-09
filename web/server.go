@@ -34,11 +34,16 @@ func (s server) Handler() http.Handler {
 	router := mux.NewRouter()
 
 	// router.HandleFunc("/", s.indexHandler).Methods("GET")
+
 	router.HandleFunc("/signup", s.signupHandler).Methods("POST")
 	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
 	router.HandleFunc("/signout", s.signoutHandler).Methods("POST")
+
 	// router.HandleFunc("/groups", s.addStudyGroupHandler).Methods("POST")
 	router.HandleFunc("/organizations", s.addOrganizationHandler).Methods("POST")
+
+	router.HandleFunc("/organizations/{id:[0-9]+}/departments", s.addDepartmentHandler)
+
 	router.HandleFunc("/departments/{id:[0-9]+}/groups", s.addStudyGroupHandler).Methods("POST")
 
 	return handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
@@ -193,6 +198,43 @@ func (s *server) addOrganizationHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	if _, err := s.app.CreateBelonging(organization.ID, userName); err != nil {
 		http.Error(w, "failed to create belonging", http.StatusBadRequest)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) addDepartmentHandler(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	organizationID, err := strconv.ParseUint(v["id"], 10, 64)
+	if err != nil {
+		http.Error(w, "invalid department id", http.StatusBadRequest)
+		return
+	}
+	// TODO: organizationIDが存在するものか確認（ブラウザ以外でpostされたときに弾くために）
+
+	departmentDataSet := &model.Department{
+		Name: r.FormValue("name"),
+		URL:  r.FormValue("url"),
+	}
+	if err := validateAll(departmentDataSet); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// TODO: フォーム入力されたuserNameリストをバリデーションして、変数にセットする
+	//      userNameはグループに所属していること（管理者でなくてもいい）
+	//      userNameは存在していること（service層で確認）
+
+	name, url := departmentDataSet.Name, departmentDataSet.URL
+	userNames := r.Form["userName"]
+
+	department, err := s.app.CreateDepartment(organizationID, name, url)
+	if err != nil {
+		http.Error(w, "failed to create department", http.StatusBadRequest)
+		return
+	}
+	if _, err := s.app.CreateStaff(department.ID, userNames); err != nil {
+		http.Error(w, "failed to create staff", http.StatusBadRequest)
 		return
 	}
 
