@@ -11,10 +11,16 @@ const App: React.FC = () => {
           <Link to="/">ホーム</Link>
         </li>
         <li>
+          <Link to="/signin">ログイン</Link>
+        </li>
+        <li>
+          <Link to="/signout">ログアウト</Link>
+        </li>
+        <li>
           <Link to="/signup">ユーザー 新規登録</Link>
         </li>
         <li>
-          <Link to="/group">グループ 新規登録</Link>
+          <Link to="/organizations">組織登録</Link>
         </li>
       </ul>
 
