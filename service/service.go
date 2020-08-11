@@ -19,6 +19,7 @@ type Dokodemo interface {
 	FindUserByUserName(userName string) (*model.User, error)
 	LoginUser(userName string, password string) (bool, error)
 	CreateNewToken(userID uint64, expiresAt time.Time) (string, error)
+	FindUserByToken(token string) (*model.User, error)
 
 	CreateOrganization(name string, url string) (*model.Organization, error)
 	CreateBelonging(OrganizationID uint64, userName string) (*model.Belonging, error)
@@ -28,6 +29,10 @@ type Dokodemo interface {
 
 	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
 	CreateMembership(studyGroupID uint64, userName []string) (*model.Membership, error)
+
+	CreateEvent(name string, eventDate time.Time, description string, place string) (*model.Event, error)
+	CreateOwnership(studyGroupID uint64, eventID uint64) (*model.Ownership, error)
+	CreateAdministrator(userID uint64, eventID uint64) (*model.Administrator, error)
 }
 
 func NewApp(repo repository.Repository) Dokodemo {

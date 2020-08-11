@@ -165,8 +165,6 @@ CREATE TABLE membership (
 CREATE TABLE event (
     `id` BIGINT UNSIGNED NOT NULL,
 
-    `sub_study_group_id` BIGINT UNSIGNED NOT NULL,
-
     `name` VARCHAR(255) NOT NULL,
     `event_date` DATETIME(6) NOT NULL,
     `description` VARCHAR(5000) NOT NULL,
@@ -176,6 +174,31 @@ CREATE TABLE event (
     `updated_at` DATETIME(6) NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY (name),
+
+    KEY (created_at),
+    KEY (updated_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE ownership (
+    `id` BIGINT UNSIGNED NOT NULL,
+
+    `study_group_id` BIGINT UNSIGNED NOT NULL,
+    `event_id` BIGINT UNSIGNED NOT NULL,
+
+    `created_at` DATETIME(6) NOT NULL,
+    `updated_at` DATETIME(6) NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY (study_group_id, event_id),
+
+    FOREIGN KEY (study_group_id)
+        REFERENCES study_group(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (event_id)
+        REFERENCES event(id)
+        ON DELETE CASCADE,
 
     KEY (created_at),
     KEY (updated_at)

@@ -58,3 +58,7 @@ func (app *dokodemo) CreateNewToken(userID uint64, expiresAt time.Time) (string,
 	}
 	return token, nil
 }
+
+func (app *dokodemo) FindUserByToken(token string) (*model.User, error) {
+	return app.repo.FindUserByToken(token)
+}

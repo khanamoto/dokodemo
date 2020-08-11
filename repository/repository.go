@@ -15,6 +15,7 @@ type Repository interface {
 	FindUserByUserName(userName string) (*model.User, error)
 	FindPasswordHashByUserName(userName string) (string, error)
 	CreateNewToken(userID uint64, token string, expiresAt time.Time) error
+	FindUserByToken(token string) (*model.User, error)
 
 	CreateOrganization(name string, url string) (*model.Organization, error)
 	CreateBelonging(userID uint64, organizationID uint64, authority int32) (*model.Belonging, error)
@@ -24,6 +25,10 @@ type Repository interface {
 
 	CreateStudyGroup(departmentID uint64, name string, url string) (*model.StudyGroup, error)
 	CreateMembership(userIDs []uint64, studyGroupID uint64, authority int32) (*model.Membership, error)
+
+	CreateEvent(name string, eventDate time.Time, description string, place string) (*model.Event, error)
+	CreateOwnership(studyGroupID uint64, eventID uint64) (*model.Ownership, error)
+	CreateAdministrator(userID uint64, eventID uint64) (*model.Administrator, error)
 
 	Close() error
 }
