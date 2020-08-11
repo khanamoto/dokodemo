@@ -39,6 +39,8 @@ func (s server) Handler() http.Handler {
 	router.HandleFunc("/signin", s.signinHandler).Methods("POST")
 	router.HandleFunc("/signout", s.signoutHandler).Methods("POST")
 
+	// router.HandleFunc("/registrations", s.registrationHandler).Methods("POST")
+
 	router.HandleFunc("/organizations", s.addOrganizationHandler).Methods("POST")
 
 	router.HandleFunc("/organizations/{id:[0-9]+}/departments", s.addDepartmentHandler)

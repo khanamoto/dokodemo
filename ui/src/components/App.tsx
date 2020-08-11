@@ -17,10 +17,10 @@ const App: React.FC = () => {
           <Link to="/signout">ログアウト</Link>
         </li>
         <li>
-          <Link to="/signup">ユーザー 新規登録</Link>
+          <Link to="/signup">ユーザー登録</Link>
         </li>
         <li>
-          <Link to="/organizations">組織登録</Link>
+          <Link to="/registrations">新規登録して始める</Link>
         </li>
       </ul>
 
